@@ -1,21 +1,28 @@
 import Card from "@/components/ui/Card";
-import React from "react";
+import React, { Fragment } from "react";
 import classes from "@/components/meetups/MeetupItem.module.css";
 import { MongoClient, ObjectId } from "mongodb";
+import Head from "next/head";
 
 const MeetupsDetails = (props) => {
   return (
-    <div className={classes.item}>
-      <Card>
-        <div className={classes.image}>
-          <img src={props.meetupData.image} alt={props.meetupData.title} />
-        </div>
-        <div className={classes.content}>
-          <h3>{props.meetupData.title}</h3>
-          <address>{props.meetupData.address}</address>
-        </div>
-      </Card>
-    </div>
+    <Fragment>
+      <Head>
+        <title>{props.meetupData.title}</title>
+        <meta name="decsription" content={props.meetupData.description}></meta>
+      </Head>
+      <div className={classes.item}>
+        <Card>
+          <div className={classes.image}>
+            <img src={props.meetupData.image} alt={props.meetupData.title} />
+          </div>
+          <div className={classes.content}>
+            <h3>{props.meetupData.title}</h3>
+            <address>{props.meetupData.address}</address>
+          </div>
+        </Card>
+      </div>
+    </Fragment>
   );
 };
 

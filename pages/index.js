@@ -1,8 +1,21 @@
 import MeetupList from "@/components/meetups/MeetupList";
 import { MongoClient } from "mongodb";
+import Head from "next/head";
+import { Fragment } from "react";
 
 const HomePage = (props) => {
-  return <MeetupList meetups={props.meetups} />;
+  return (
+    <Fragment>
+      <Head>
+        <title>React MeetUp</title>
+        <meta
+          name="decsription"
+          content="Browse all active React Meetup Places"
+        ></meta>
+      </Head>
+      <MeetupList meetups={props.meetups} />;
+    </Fragment>
+  );
 };
 
 // export async function getServerSideProps(context) {

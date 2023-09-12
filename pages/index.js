@@ -1,27 +1,44 @@
-import Layout from "@/components/layout/Layout";
 import MeetupList from "@/components/meetups/MeetupList";
+import { MongoClient } from "mongodb";
 
-const HomePage = () => {
-  const DUMMY_MEETUPS = [
-    {
-      id: "m1",
-      title: "A First Meetup",
-      image:
-        "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8Y2FmZXxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80",
-      address: "Some Address 5, 12345 Some City",
-      description: "First MeetUp",
-    },
-    {
-      id: "m2",
-      title: "A Second Meetup",
-      image:
-        "https://images.unsplash.com/photo-1559925393-8be0ec4767c8?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxzZWFyY2h8OHx8Y2FmZXxlbnwwfHwwfHx8MA%3D%3D&w=1000&q=80",
-      address: "Some Address 10, 12345 Some City",
-      description: "Second MeetUp",
-    },
-  ];
-
-  return <MeetupList meetups={DUMMY_MEETUPS} />;
+const HomePage = (props) => {
+  return <MeetupList meetups={props.meetups} />;
 };
+
+// export async function getServerSideProps(context) {
+//   //fetching the API
+//   const req = context.req;
+//   const res = context.res;
+//   return {
+//     props: {
+//       meetups: DUMMY_MEETUPS,
+//     },
+//   };
+// }
+
+export async function getStaticProps() {
+  // fetching the API
+  const client = await MongoClient.connect(
+    "mongodb+srv://rajat-user:rajatsundriyal@cluster0.zfkoszx.mongodb.net/meetups?retryWrites=true&w=majority"
+  );
+
+  const db = client.db();
+  const meetupsCollection = db.collection("meetups");
+  const result = await meetupsCollection.find().toArray();
+  client.close();
+
+  return {
+    props: {
+      meetups: result.map((meetup) => ({
+        title: meetup.title,
+        image: meetup.image,
+        address: meetup.address,
+        description: meetup.description,
+        id: meetup._id.toString(),
+      })),
+    },
+    revalidate: 10,
+  };
+}
 
 export default HomePage;
